@@ -1,0 +1,15 @@
+This code / repo created by Dan Zubey N7NMD dzubey@openincident.com
+GPL2, blah blah..
+
+This is the source code for Arizona Digital Radio Group's 
+AX25 Mesh project.
+
+There are two directories:
+
+olsrd:
+	Contains the source git repository as of 12 January. Can be updated
+	with a simple git pull
+
+debian:
+	Contains the files nessicesary to create the master debian package
+	for the project.
