@@ -1,0 +1,20 @@
+Package: olsrd-adra
+Architecture: i386
+Depends: ax25-apps, ax25-tools, ax25-xtools, ax25spyd, libax25, libax25-dev, joe, nano, ax25spyd, gawk, telnetd, openssh-server, proftpd, gpsd
+Description: This is a package to support the Arizona Digital Radio
+ Association's ax25 (packet radio) mesh network. It tries its best to detect
+ and generate a configuration automatically for the network, without any user
+ intervention. It also allows for limited remote management.
+ .
+ OLSRD: optimized link-state routing daemon (unik-olsrd)
+ unik-olsrd is an implementation of the Optimized Link State Routing protocol 
+ for Mobile Ad-Hoc networks(MANET). The protocol is described in RFC3626. It 
+ is designed to be run as a standalone server process. This version is
+ customized for the Arizona Digital Radio Association.
+ .
+ OLSR operates as a table driven, proactive protocol, i.e., it exchanges 
+ topology information with other nodes of the network regularly. It is 
+ developed to work independently from other protocols. Likewise, OLSR makes no
+ assumptions about the underlying link-layer.
+Version: 20110915
+Maintainer: Dan Zubey <dzubey@openincident.com>

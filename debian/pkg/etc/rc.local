@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+# rc.local for Arizona Digital Radio Association
+# Dan Zubey dzubey@openincident.com version 20110630
+#
+ 
+# This is where you set the speed at.
+TNC_SPEED="9600"
+
+ 
+# Kill any extra processes that shouldn't be running yet.
+ killall -q -9 kissattach 
+ killall -q -9 olsrd
+ killall -q -9 zsoundmodem
+ 
+sleep 2
+
+#Determine callsign and IP information.
+		CALLSIGN=$(cat /etc/CALLSIGN)
+		IP=$(echo $CALLSIGN|md5sum|awk '{printf ("44.124.%d.%d",strtonum("0x"substr($0,1,2)),strtonum("0x"substr($0,31,2)))}')
+
+# Update olsrd.conf file (works first time only)
+sed 's/CALLSIGN/$CALLSIGN/' /usr/local/etc/oslrd.conf
+
+# Check if we're supposed to set up for TNC or Soundmodem
+
+if [ -e /etc/TNC ]
+
+then
+
+	# Re-plug in the serial port adaptor
+	 MODULE=$(lsmod |awk '/usbserial/ {print $4}')
+	 modprobe -r $MODULE
+	 
+       sleep 2
+	 modprobe $MODULE
+       sleep 2
+
+	ln -s /dev/ttyUSB0 /dev/tnc
+	
+	# Set the tnc up per the abover information.
+		perl /usr/local/sbin/kisssetup.pl $TNC_SPEED $(ls -L /dev/tnc)
+	
+	
+	
+else
+	
+	# If no tnc present, Just run the soundmodem
+	echo "Running soundmodem.."
+		soundmodem &
+		sleep 20
+fi
+
+	# Attach as a kiss device
+		kissattach -l /dev/tnc ax25mesh $IP
+		kissparms  -p ax25mesh -t 250 -s 200 -r 32 -l 100 -f n
+
+
+# Setup networking  
+echo 0 > /proc/sys/net/ax25/ax0/backoff_type
+echo 1 >/proc/sys/net/ipv4/ip_forward 
+
+ iptables -I OUTPUT -p udp -d 44.0.0.0/8 --dport 137:139 -j DROP 
+ iptables -I OUTPUT -p udp -d 44.0.0.0/8 --dport 631:631 -j DROP 
+
+# run olsrd without any debugging information.
+/usr/local/sbin/olsrd -f /usr/local/etc/olsrd.conf -d 0 
